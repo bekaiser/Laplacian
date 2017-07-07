@@ -1,8 +1,8 @@
 ! ****************************************************************************
 
-! FILE:         mpi_cfd2.f90
+! FILE:         mpi_Laplacian2D.f90
 ! AUTHOR:       Bryan Kaiser
-! DATE:         7/3/17
+! DATE:         7/7/2017
 ! DESCRIPTION:  This script computes the Laplacian of the variable u using 
 !               second-order accurate central finite differences on Np number 
 !               of processors. The domain is divided up in the x direction, so
@@ -14,7 +14,7 @@
       
 
 ! ****************************************************************************
-program mpi_cfd2
+program mpi_Laplacian2D
 
 implicit none
 include 'mpif.h'
@@ -122,18 +122,12 @@ if ( rank == 0 ) then ! do on the master rank (rank 0):
   ! 4) Specify the starting indices for each chunk of the signal passed to 
   !    each rank.
 
-  ! MPI start indices, with halo cells
-  Nh_start(1) = 0 
-  Nh_start(2) = int((Nxp)*(Ny+2*ih))             
-  Nh_start(3) = int((2*Nxp)*(Ny+2*ih)) 
-  Nh_start(4) = int((3*Nxp)*(Ny+2*ih))
+  ! MPI start indices, with/without halo cells
+  do i = 1,Np
+    Nh_start(i) = int((i-1)*Nxp*(Ny+2*ih))
+    N_start(i) = int((i-1)*Nc)
+  end do
   
-  ! MPI start indices, without halo cells
-  N_start(1) = 0
-  N_start(2) = Nc
-  N_start(3) = int(2*Nc)
-  N_start(4) = int(3*Nc)
-
 end if ! do this on the master rank (rank 0)
 
 if ( Nprocs == Np ) then ! if Np is the same number of ranks as you specified with mpirun -n
@@ -200,4 +194,4 @@ end if ! if Nprocs = Np
 
 call MPI_FINALIZE(ierror)
 
-end program mpi_cfd2
+end program mpi_Laplacian2D
