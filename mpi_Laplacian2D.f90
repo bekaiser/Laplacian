@@ -187,6 +187,8 @@ if ( Nprocs == Np ) then ! if Np is the same number of ranks as you specified wi
     write(2,*) soln_out(j)  
   end do
   close (2)
+  
+  ! 9) ADD BINARY FILE OUTPUT OPTION!
 
   end if ! rank == 0
 
